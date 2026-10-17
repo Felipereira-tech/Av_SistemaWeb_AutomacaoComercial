@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import PDV from './pages/PDV';
 import Produtos from './pages/Produtos';
 import Financeiro from './pages/Financeiro';
+import GestaoCaixa from './pages/GestaoCaixa';
 import Usuarios from './pages/Usuarios';
 
 export default function App() {
