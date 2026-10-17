@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from models import db, Caixinha, HistoricoCaixa
 from datetime import datetime
 
