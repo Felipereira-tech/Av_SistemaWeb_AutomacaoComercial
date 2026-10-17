@@ -11,7 +11,10 @@ class Usuario(db.Model):
     data_criacao = db.Column(db.DateTime, default=datetime.now)
 
     def to_dict(self):
-        return {"id": self.id, "username": self.username}
+        return {
+            "id": self.id, 
+            "username": self.username
+        }
 
 class Produto(db.Model):
     __tablename__ = 'produtos'
@@ -20,9 +23,8 @@ class Produto(db.Model):
     preco = db.Column(db.Float, nullable=False)
     quantidade = db.Column(db.Integer, nullable=False, default=0)
     
-    # A SOLUÇÃO: Coluna adicionada para garantir o funcionamento do Soft Delete
+    # Coluna adicionada para garantir o funcionamento do Soft Delete
     ativo = db.Column(db.Boolean, default=True) 
-    
     data_criacao = db.Column(db.DateTime, default=datetime.now)
 
     def to_dict(self):
@@ -69,6 +71,7 @@ class ItemVenda(db.Model):
     produto_id = db.Column(db.Integer, db.ForeignKey('produtos.id'), nullable=False)
     quantidade = db.Column(db.Integer, nullable=False)
     preco_unitario = db.Column(db.Float, nullable=False)
+    
     produto = db.relationship('Produto')
 
     def to_dict(self):
@@ -80,11 +83,12 @@ class ItemVenda(db.Model):
             "preco_unitario": self.preco_unitario,
             "subtotal": round(self.quantidade * self.preco_unitario, 2)
         }
+
 class Caixinha(db.Model):
     __tablename__ = 'caixinhas'
     id = db.Column(db.Integer, primary_key=True)
     
-    # ISOLAMENTO: Vincula a caixinha/cofre ao usuário dono
+    # ISOLAMENTO: Vincula a caixinha/cofre ao utilizador dono
     user_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=True)
     
     nome = db.Column(db.String(150), nullable=False)
@@ -98,10 +102,12 @@ class Caixinha(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
+            "user_id": self.user_id,
             "nome": self.nome,
             "banco": self.banco,
             "valorAtual": self.valorAtual,
-            "meta": self.meta
+            "meta": self.meta,
+            "data_criacao": self.data_criacao.isoformat() if self.data_criacao else None
         }
 
 class HistoricoCaixa(db.Model):
@@ -120,6 +126,6 @@ class HistoricoCaixa(db.Model):
             "caixinhaNome": self.caixinha.nome if self.caixinha else "Excluída",
             "tipo": self.tipo,
             "valor": self.valor,
-            "data": self.data.isoformat(),
+            "data": self.data.isoformat() if self.data else None,
             "usuario": self.usuario
         }
