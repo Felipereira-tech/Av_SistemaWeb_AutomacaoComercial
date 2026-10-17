@@ -24,6 +24,7 @@ export default function App() {
         <Route path="/pdv" element={<PDV />} />
         <Route path="/Produtos" element={<Produtos />} />
         <Route path="/Financeiro" element={<Financeiro />} />
+        <Route path="/gestaocaixa" element={<GestaoCaixa />} />
         <Route path="/usuarios" element={<Usuarios />} />
 
         {/* Rota coringa caso digitem algo errado (joga para o login) */}
