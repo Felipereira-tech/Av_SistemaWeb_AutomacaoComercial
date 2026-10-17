@@ -1,0 +1,383 @@
+/* src/pages/Dashboard.css */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f1f5f9; /* Um cinza um pouco mais moderno e suave para o fundo */
+  color: #1e293b;
+}
+
+/* =========================================
+   ESTRUTURA PRINCIPAL (MOBILE FIRST)
+========================================= */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* =========================================
+   MENU LATERAL (SIDEBAR) RESPONSIVO (MOBILE)
+========================================= */
+.sidebar {
+  width: 100%;
+  background-color: #0f766e;
+  color: white;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+/* Ajustes da Logo e Cabeçalho no Celular */
+.sidebar-header {
+  padding: 0;
+  border: none;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-logo {
+  max-width: 90px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.sidebar-header p {
+  display: none;
+}
+
+/* Navegação do Menu (Celular) - Ajustado com Scroll Horizontal Suave */
+.sidebar-nav {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  white-space: nowrap; /* Impede os botões de quebrarem linha */
+  -webkit-overflow-scrolling: touch; /* Deixa o scroll suave no celular */
+  width: 100%; /* Garante que ocupe a tela toda para rolar */
+}
+
+/* Oculta a barra de rolagem feia, mas mantém o funcionamento */
+.sidebar-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-item {
+  padding: 0.5rem 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.nav-item.active {
+  background-color: white;
+  color: #0f766e;
+  font-weight: 700;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.sidebar-footer {
+  padding: 0;
+  border: none;
+  margin: 0;
+}
+
+.btn-logout {
+  padding: 0.5rem 1rem;
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background-color: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+/* =========================================
+   CONTEÚDO PRINCIPAL (DASHBOARD)
+========================================= */
+.main-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.content-header {
+  margin-bottom: 2rem;
+}
+
+.content-header h1 {
+  font-size: 1.5rem;
+  color: #0f172a;
+  margin-bottom: 0.3rem;
+  font-weight: 700;
+}
+
+.content-header p {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.loading-message {
+  color: #64748b;
+  font-style: italic;
+  text-align: center;
+  padding: 3rem;
+}
+
+/* =========================================
+   CARDS DE RESUMO
+========================================= */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.card h3 {
+  color: #64748b;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.card-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.card-value.cash {
+  color: #0d9488;
+}
+
+.card.alert {
+  border-left: 5px solid #ef4444;
+}
+
+.card-subtitle {
+  font-size: 0.8rem;
+  color: #ef4444;
+  display: block;
+  margin-top: 0.4rem;
+  font-weight: 500;
+}
+
+/* =========================================
+   TABELAS DE VENDAS E CAIXA
+========================================= */
+.recent-sales h2 {
+  font-size: 1.2rem;
+  color: #0f172a;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.table-container {
+  background-color: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow-x: auto;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.sales-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  min-width: 500px;
+}
+
+.sales-table th {
+  background-color: #f8fafc;
+  padding: 1rem 1.25rem;
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.sales-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.sales-table tr:last-child td {
+  border-bottom: none;
+}
+
+.empty-table {
+  text-align: center;
+  color: #94a3b8;
+  font-style: italic;
+  padding: 3rem !important;
+}
+
+.badge {
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.badge.pix { background-color: #dcfce7; color: #15803d; }
+.badge.dinheiro { background-color: #fef08a; color: #a16207; }
+.badge.debito { background-color: #e0e7ff; color: #4338ca; }
+.badge.credito { background-color: #ffedd5; color: #c2410c; }
+
+/* =========================================
+   AJUSTES ESPECÍFICOS PARA COMPUTADOR (DESKTOP)
+========================================= */
+@media (min-width: 1024px) {
+  .dashboard-container {
+    flex-direction: row;
+  }
+
+  .sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 0;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  }
+
+  /* Ajustes da Logo e Cabeçalho no Desktop */
+  .sidebar-header {
+    padding: 2.5rem 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza a logo */
+    width: 100%;
+  }
+
+  .sidebar-logo {
+    max-width: 140px; /* Logo num tamanho ideal */
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Sombra elegante na logo */
+    border: 2px solid rgba(255,255,255,0.1); /* Bordinha sutil */
+  }
+
+  .sidebar-header p {
+    display: block;
+    margin-top: 0;
+    font-size: 0.8rem;
+    color: #99f6e4;
+    text-transform: uppercase;
+    letter-spacing: 2px; /* Letras espaçadas para visual premium */
+    font-weight: 600;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    flex-direction: column;
+    padding: 1.5rem 0;
+    gap: 0.4rem; /* Espaçamento entre os menus */
+    width: 100%;
+    overflow-x: hidden;
+    white-space: normal; /* Volta ao normal no PC */
+  }
+
+  .nav-item {
+    margin: 0 1rem; /* Desgruda o menu das laterais */
+    padding: 0.85rem 1.2rem;
+    font-size: 0.95rem;
+    border-radius: 8px; /* Formato de pílula arredondada */
+    white-space: normal;
+  }
+
+  .nav-item.active {
+    background-color: white;
+    color: #0f766e;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .sidebar-footer {
+    padding: 1.5rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    width: 100%;
+    margin-top: auto; /* Empurra pro final da tela */
+  }
+
+  .btn-logout {
+    width: 100%; /* Botão ocupa a largura toda com as margens */
+    padding: 0.9rem;
+    font-size: 0.95rem;
+  }
+
+  .main-content {
+    margin-left: 260px;
+    padding: 2.5rem 3rem; /* Mais respiro nas laterais do conteúdo */
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .content-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .sales-table {
+    min-width: 100%;
+  }
+}

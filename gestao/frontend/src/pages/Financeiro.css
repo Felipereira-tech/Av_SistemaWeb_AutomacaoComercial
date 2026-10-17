@@ -1,0 +1,124 @@
+/* src/pages/Financeiro.css */
+
+/* =========================================
+   CABEÇALHO E BOTÃO DE EXPORTAR
+========================================= */
+.financeiro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.btn-exportar {
+  background-color: #10b981; /* Verde esmeralda para destacar do padrão */
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+  transition: all 0.2s;
+}
+
+.btn-exportar:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* =========================================
+   BARRA DE FILTROS DE DATA
+========================================= */
+.filtro-container {
+  background-color: white;
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.filtro-grupo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.filtro-grupo label {
+  font-size: 0.9rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.input-data {
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.95rem;
+  color: #1e293b;
+  outline: none;
+  background-color: #f8fafc;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.input-data:focus {
+  border-color: #0f766e;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+}
+
+/* =========================================
+   CORES ESPECÍFICAS DOS CARDS DE RESUMO
+========================================= */
+/* O Totalizador Geral fica verde padrão herdado do Dashboard.css */
+
+/* Pix */
+.card-pix .card-value {
+  color: #059669; /* Verde Vibrante */
+}
+
+/* Dinheiro */
+.card-dinheiro .card-value {
+  color: #d97706; /* Laranja/Dourado */
+}
+
+/* Cartões */
+.card-cartao .card-value {
+  color: #2563eb; /* Azul Forte */
+}
+
+/* =========================================
+   RESPONSIVIDADE EXTRA PARA CELULAR
+========================================= */
+@media (max-width: 768px) {
+  .filtro-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .filtro-grupo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .input-data {
+    width: 100%;
+  }
+
+  .btn-exportar {
+    width: 100%;
+    text-align: center;
+  }
+}
