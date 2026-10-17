@@ -1,111 +1,301 @@
-from flask import Blueprint, request, jsonify
+
 from flask import Blueprint, request, jsonify, current_app
-from models import db, Caixinha, HistoricoCaixa
-from datetime import datetime
+from sqlalchemy.exc import SQLAlchemyError
+from models import db, Usuario, Caixinha, HistoricoCaixa
 
-gestaocaixa_bp = Blueprint('gestaocaixa', __name__)
+gestaocaixa_bp = Blueprint("gestaocaixa", __name__)
 
-# Listar todas as caixinhas e o histórico geral (filtrado por usuário, se enviado)
-@gestaocaixa_bp.route('/caixinhas', methods=['GET'])
+
+def obter_json():
+    """Obtém o corpo JSON da requisição."""
+    dados = request.get_json(silent=True)
+    return dados if isinstance(dados, dict) else {}
+
+
+def converter_valor(valor, campo):
+    """Converte um valor monetário e rejeita valores inválidos."""
+    try:
+        numero = float(valor)
+    except (TypeError, ValueError):
+        raise ValueError(f"O campo '{campo}' deve ser numérico.")
+
+    if not __import__("math").isfinite(numero):
+        raise ValueError(f"O campo '{campo}' deve ser finito.")
+
+    if numero < 0:
+        raise ValueError(f"O campo '{campo}' não pode ser negativo.")
+
+    return round(numero, 2)
+
+
+def registrar_erro(mensagem):
+    """Registra o erro completo somente nos logs do servidor."""
+    current_app.logger.exception(mensagem)
+
+
+# ==========================================================
+# LISTAR CAIXINHAS E HISTÓRICO
+# GET /api/caixinhas?user_id=1
+# ==========================================================
+@gestaocaixa_bp.route("/caixinhas", methods=["GET"])
 def listar():
     try:
-        user_id = request.args.get('user_id')
-        
+        user_id = request.args.get("user_id", type=int)
+
         query_caixas = Caixinha.query
-        query_hist = HistoricoCaixa.query.join(Caixinha)
-        
-        if user_id:
-            query_caixas = query_caixas.filter_by(user_id=user_id)
-            query_hist = query_hist.filter(Caixinha.user_id == user_id)
-            
-        caixinhas = query_caixas.order_by(Caixinha.id.desc()).all()
-        historico = query_hist.order_by(HistoricoCaixa.data.desc()).all()
-        
+        query_historico = HistoricoCaixa.query.join(
+            Caixinha,
+            HistoricoCaixa.caixinha_id == Caixinha.id
+        )
+
+        if user_id is not None:
+            if user_id <= 0:
+                return jsonify({
+                    "erro": "ID de usuário inválido."
+                }), 400
+
+            query_caixas = query_caixas.filter(
+                Caixinha.user_id == user_id
+            )
+            query_historico = query_historico.filter(
+                Caixinha.user_id == user_id
+            )
+
+        caixinhas = query_caixas.order_by(
+            Caixinha.id.desc()
+        ).all()
+
+        historico = query_historico.order_by(
+            HistoricoCaixa.data.desc()
+        ).all()
+
         return jsonify({
             "caixinhas": [c.to_dict() for c in caixinhas],
             "historico": [h.to_dict() for h in historico]
         }), 200
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
 
-# Criar nova caixinha vinculada ao usuário
-@gestaocaixa_bp.route('/caixinhas', methods=['POST'])
+    except SQLAlchemyError:
+        db.session.rollback()
+        registrar_erro("Erro ao listar caixinhas")
+        return jsonify({
+            "erro": "Não foi possível consultar as caixinhas."
+        }), 500
+
+
+# ==========================================================
+# CRIAR CAIXINHA
+# POST /api/caixinhas
+# ==========================================================
+@gestaocaixa_bp.route("/caixinhas", methods=["POST"])
 def criar():
-    dados = request.get_json()
-    try:
-        nova_caixinha = Caixinha(
-            nome=dados['nome'],
-            banco=dados['banco'],
-            valorAtual=float(dados.get('valorAtual', 0.0)),
-            meta=float(dados.get('meta', 0.0)),
-            user_id=dados.get('user_id') # Vincula ao dono da sessão
-        )
-        db.session.add(nova_caixinha)
-        db.session.flush() # Pega o ID gerado antes de salvar tudo
+    dados = obter_json()
 
-        # Se a caixinha já nasceu com dinheiro, cria o histórico de entrada
-        if nova_caixinha.valorAtual > 0:
+    nome = dados.get("nome")
+    banco = dados.get("banco")
+    user_id = dados.get("user_id")
+
+    if not isinstance(nome, str) or not nome.strip():
+        return jsonify({
+            "erro": "Informe o nome da caixinha."
+        }), 400
+
+    if not isinstance(banco, str) or not banco.strip():
+        return jsonify({
+            "erro": "Informe o banco ou instituição financeira."
+        }), 400
+
+    try:
+        if user_id is None:
+            return jsonify({
+                "erro": "Usuário não informado. Faça login novamente."
+            }), 400
+
+        user_id = int(user_id)
+
+        if user_id <= 0:
+            raise ValueError("ID de usuário inválido.")
+
+        usuario = db.session.get(Usuario, user_id)
+
+        if usuario is None:
+            return jsonify({
+                "erro": "Usuário não encontrado. Faça login novamente."
+            }), 400
+
+        valor_atual = converter_valor(
+            dados.get("valorAtual", 0), "valorAtual"
+        )
+        meta = converter_valor(
+            dados.get("meta", 0), "meta"
+        )
+
+        nova_caixinha = Caixinha(
+            nome=nome.strip(),
+            banco=banco.strip(),
+            valorAtual=valor_atual,
+            meta=meta,
+            user_id=usuario.id
+        )
+
+        db.session.add(nova_caixinha)
+        db.session.flush()
+
+        if valor_atual > 0:
             historico = HistoricoCaixa(
                 caixinha_id=nova_caixinha.id,
-                tipo='entrada',
-                valor=nova_caixinha.valorAtual,
-                usuario=dados.get('usuario', 'Admin')
+                tipo="entrada",
+                valor=valor_atual,
+                usuario=usuario.username
             )
             db.session.add(historico)
 
         db.session.commit()
+
         return jsonify(nova_caixinha.to_dict()), 201
-    except Exception as e:
+
+    except (TypeError, ValueError) as erro:
         db.session.rollback()
-        return jsonify({"erro": str(e)}), 500
+        return jsonify({"erro": str(erro)}), 400
 
-# Movimentar Fundos (Adicionar ou Retirar)
-@gestaocaixa_bp.route('/caixinhas/<int:id>/movimentar', methods=['POST'])
+    except SQLAlchemyError:
+        db.session.rollback()
+        registrar_erro("Erro de banco ao criar caixinha")
+        return jsonify({
+            "erro": "Falha ao salvar a caixinha no banco de dados."
+        }), 500
+
+    except Exception:
+        db.session.rollback()
+        registrar_erro("Erro inesperado ao criar caixinha")
+        return jsonify({
+            "erro": "Ocorreu um erro interno ao criar a caixinha."
+        }), 500
+
+
+# ==========================================================
+# MOVIMENTAR SALDO
+# POST /api/caixinhas/<id>/movimentar
+# ==========================================================
+@gestaocaixa_bp.route(
+    "/caixinhas/<int:id>/movimentar",
+    methods=["POST"]
+)
 def movimentar(id):
-    dados = request.get_json()
+    dados = obter_json()
+
+    tipo = dados.get("tipo")
+
+    if tipo not in ("entrada", "saida"):
+        return jsonify({
+            "erro": "Tipo inválido. Use 'entrada' ou 'saida'."
+        }), 400
+
     try:
-        caixinha = Caixinha.query.get(id)
-        if not caixinha:
-            return jsonify({"erro": "Caixinha não encontrada"}), 404
+        valor = converter_valor(
+            dados.get("valor"), "valor"
+        )
 
-        tipo = dados['tipo'] # 'entrada' ou 'saida'
-        valor = float(dados['valor'])
+        if valor <= 0:
+            return jsonify({
+                "erro": "O valor da movimentação deve ser maior que zero."
+            }), 400
 
-        if tipo == 'saida' and valor > caixinha.valorAtual:
-            return jsonify({"erro": "Saldo insuficiente"}), 400
+        caixinha = db.session.execute(
+            db.select(Caixinha)
+            .where(Caixinha.id == id)
+            .with_for_update()
+        ).scalar_one_or_none()
 
-        # Atualiza o saldo da caixinha
-        if tipo == 'entrada':
-            caixinha.valorAtual += valor
+        if caixinha is None:
+            return jsonify({
+                "erro": "Caixinha não encontrada."
+            }), 404
+
+        saldo_atual = float(caixinha.valorAtual or 0)
+
+        if tipo == "saida" and valor > saldo_atual:
+            return jsonify({
+                "erro": "Saldo insuficiente."
+            }), 400
+
+        if tipo == "entrada":
+            caixinha.valorAtual = round(
+                saldo_atual + valor, 2
+            )
         else:
-            caixinha.valorAtual -= valor
+            caixinha.valorAtual = round(
+                saldo_atual - valor, 2
+            )
 
-        # Registra no histórico
+        usuario_nome = dados.get("usuario", "Admin")
+        if not isinstance(usuario_nome, str):
+            usuario_nome = "Admin"
+
         historico = HistoricoCaixa(
             caixinha_id=caixinha.id,
             tipo=tipo,
             valor=valor,
-            usuario=dados.get('usuario', 'Admin')
+            usuario=usuario_nome[:50]
         )
+
         db.session.add(historico)
         db.session.commit()
-        
-        return jsonify({"mensagem": "Movimentação realizada com sucesso"}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"erro": str(e)}), 500
 
-# Excluir caixinha e seu histórico
-@gestaocaixa_bp.route('/caixinhas/<int:id>', methods=['DELETE'])
+        return jsonify({
+            "mensagem": "Movimentação realizada com sucesso.",
+            "caixinha": caixinha.to_dict()
+        }), 200
+
+    except (TypeError, ValueError) as erro:
+        db.session.rollback()
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        registrar_erro("Erro de banco ao movimentar caixinha")
+        return jsonify({
+            "erro": "Não foi possível registrar a movimentação."
+        }), 500
+
+    except Exception:
+        db.session.rollback()
+        registrar_erro("Erro inesperado ao movimentar caixinha")
+        return jsonify({
+            "erro": "Ocorreu um erro interno na movimentação."
+        }), 500
+
+
+# ==========================================================
+# EXCLUIR CAIXINHA E SEU HISTÓRICO
+# DELETE /api/caixinhas/<id>
+# ==========================================================
+@gestaocaixa_bp.route("/caixinhas/<int:id>", methods=["DELETE"])
 def excluir(id):
     try:
-        caixinha = Caixinha.query.get(id)
-        if not caixinha:
-            return jsonify({"erro": "Caixinha não encontrada"}), 404
-            
+        caixinha = db.session.get(Caixinha, id)
+
+        if caixinha is None:
+            return jsonify({
+                "erro": "Caixinha não encontrada."
+            }), 404
+
         db.session.delete(caixinha)
         db.session.commit()
-        return jsonify({"mensagem": "Caixinha excluída"}), 200
-    except Exception as e:
+
+        return jsonify({
+            "mensagem": "Caixinha e histórico excluídos com sucesso."
+        }), 200
+
+    except SQLAlchemyError:
         db.session.rollback()
-        return jsonify({"erro": str(e)}), 500
+        registrar_erro("Erro de banco ao excluir caixinha")
+        return jsonify({
+            "erro": "Não foi possível excluir a caixinha."
+        }), 500
+
+    except Exception:
+        db.session.rollback()
+        registrar_erro("Erro inesperado ao excluir caixinha")
+        return jsonify({
+            "erro": "Ocorreu um erro interno ao excluir a caixinha."
+        }), 500
