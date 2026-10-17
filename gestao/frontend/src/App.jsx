@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-// Importação de todas las telas do projeto
+// Importação de todas as telas do projeto
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import PDV from './pages/PDV';
@@ -20,11 +20,11 @@ export default function App() {
         {/* Rotas Públicas */}
         <Route path="/login" element={<Login />} />
 
-        {/* Rotas Protegidas / Principais */}
+        {/* Rotas Protegidas / Principais (TUDO EM MINÚSCULO) */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/pdv" element={<PDV />} />
-        <Route path="/Produtos" element={<Produtos />} />
-        <Route path="/Financeiro" element={<Financeiro />} />
+        <Route path="/produtos" element={<Produtos />} />
+        <Route path="/financeiro" element={<Financeiro />} />
         <Route path="/gestaocaixa" element={<GestaoCaixa />} />
         <Route path="/usuarios" element={<Usuarios />} />
 
