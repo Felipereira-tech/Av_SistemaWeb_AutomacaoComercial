@@ -1,0 +1,75 @@
+/* GestaoCaixa.css - Complementar ao padrão do sistema */
+
+.caixinhas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.caixinha-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.caixinha-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.caixinha-titulo {
+  font-size: 1.1rem !important;
+  color: #1e293b !important;
+  text-transform: none !important;
+  margin: 0 !important;
+  font-weight: 700 !important;
+}
+
+.px-badge {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.caixinha-saldo {
+  margin-bottom: 1.5rem;
+}
+
+/* Área da Barra de Progresso */
+.progresso-area {
+  background-color: #f8fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+}
+
+.progresso-textos {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+.progresso-textos strong {
+  color: #0f766e;
+}
+
+.progresso-barra-fundo {
+  width: 100%;
+  background-color: #e2e8f0;
+  border-radius: 10px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.progresso-barra-preenchimento {
+  background-color: #0f766e;
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease-in-out;
+}

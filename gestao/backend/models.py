@@ -80,3 +80,46 @@ class ItemVenda(db.Model):
             "preco_unitario": self.preco_unitario,
             "subtotal": round(self.quantidade * self.preco_unitario, 2)
         }
+class Caixinha(db.Model):
+    __tablename__ = 'caixinhas'
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # ISOLAMENTO: Vincula a caixinha/cofre ao usuário dono
+    user_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=True)
+    
+    nome = db.Column(db.String(150), nullable=False)
+    banco = db.Column(db.String(100), nullable=False)
+    valorAtual = db.Column(db.Float, default=0.0)
+    meta = db.Column(db.Float, default=0.0)
+    data_criacao = db.Column(db.DateTime, default=datetime.now)
+
+    historico = db.relationship('HistoricoCaixa', backref='caixinha', lazy=True, cascade="all, delete-orphan")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "nome": self.nome,
+            "banco": self.banco,
+            "valorAtual": self.valorAtual,
+            "meta": self.meta
+        }
+
+class HistoricoCaixa(db.Model):
+    __tablename__ = 'historico_caixa'
+    id = db.Column(db.Integer, primary_key=True)
+    caixinha_id = db.Column(db.Integer, db.ForeignKey('caixinhas.id'), nullable=False)
+    tipo = db.Column(db.String(20), nullable=False) # 'entrada' ou 'saida'
+    valor = db.Column(db.Float, nullable=False)
+    data = db.Column(db.DateTime, default=datetime.now)
+    usuario = db.Column(db.String(50), default="Admin")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "caixinha_id": self.caixinha_id,
+            "caixinhaNome": self.caixinha.nome if self.caixinha else "Excluída",
+            "tipo": self.tipo,
+            "valor": self.valor,
+            "data": self.data.isoformat(),
+            "usuario": self.usuario
+        }

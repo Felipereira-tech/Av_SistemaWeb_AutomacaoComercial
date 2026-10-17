@@ -156,6 +156,7 @@ export default function Usuarios() {
           <Link to="/pdv" className="nav-item">Caixa (PDV)</Link>
           <Link to="/produtos" className="nav-item">Produtos</Link>
           <Link to="/financeiro" className="nav-item">Financeiro</Link>
+           <Link to="/gestaocaixa" className="nav-item">Gestão de Caixa</Link>
           <Link to="/usuarios" className="nav-item active">Usuários</Link>
         </nav>
 
