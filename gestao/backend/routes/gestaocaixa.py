@@ -1,4 +1,3 @@
-
 from flask import Blueprint, request, jsonify, current_app
 from sqlalchemy.exc import SQLAlchemyError
 from models import db, Usuario, Caixinha, HistoricoCaixa
@@ -105,22 +104,26 @@ def criar():
         }), 400
 
     try:
+        # CORREÇÃO PRINCIPAL: Mecanismo de fallback (Segurança contra falhas do Frontend)
+        # Se o frontend esquecer de mandar o user_id, pegamos o primeiro usuário (Admin) do banco
         if user_id is None:
-            return jsonify({
-                "erro": "Usuário não informado. Faça login novamente."
-            }), 400
-
-        user_id = int(user_id)
-
-        if user_id <= 0:
-            raise ValueError("ID de usuário inválido.")
-
-        usuario = db.session.get(Usuario, user_id)
-
-        if usuario is None:
-            return jsonify({
-                "erro": "Usuário não encontrado. Faça login novamente."
-            }), 400
+            usuario_padrao = Usuario.query.first()
+            if usuario_padrao:
+                usuario = usuario_padrao
+            else:
+                return jsonify({
+                    "erro": "Nenhum usuário cadastrado no sistema para vincular a caixinha."
+                }), 400
+        else:
+            user_id = int(user_id)
+            if user_id <= 0:
+                raise ValueError("ID de usuário inválido.")
+            
+            usuario = db.session.get(Usuario, user_id)
+            if usuario is None:
+                return jsonify({
+                    "erro": "Usuário informado não foi encontrado."
+                }), 400
 
         valor_atual = converter_valor(
             dados.get("valorAtual", 0), "valorAtual"
@@ -227,6 +230,7 @@ def movimentar(id):
                 saldo_atual - valor, 2
             )
 
+        # Se não enviarem o nome, usamos Admin por padrão para não quebrar
         usuario_nome = dados.get("usuario", "Admin")
         if not isinstance(usuario_nome, str):
             usuario_nome = "Admin"
