@@ -303,3 +303,20 @@ def excluir(id):
         return jsonify({
             "erro": "Ocorreu um erro interno ao excluir a caixinha."
         }), 500
+# ==========================================================
+# ROTA TEMPORÁRIA PARA ATUALIZAR O BANCO DE DADOS
+# ==========================================================
+@gestaocaixa_bp.route("/reset-caixas", methods=["GET"])
+def reset_caixas():
+    try:
+        # Apaga as tabelas antigas
+        HistoricoCaixa.__table__.drop(db.engine, checkfirst=True)
+        Caixinha.__table__.drop(db.engine, checkfirst=True)
+        
+        # Cria as tabelas novas com a coluna user_id
+        Caixinha.__table__.create(db.engine)
+        HistoricoCaixa.__table__.create(db.engine)
+        
+        return jsonify({"sucesso": True, "mensagem": "Tabelas recriadas com sucesso!"}), 200
+    except Exception as e:
+        return jsonify({"sucesso": False, "erro": str(e)}), 500
