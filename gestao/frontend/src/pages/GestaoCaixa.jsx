@@ -109,7 +109,8 @@ const GestaoCaixa = () => {
           banco: formData.banco,
           valorAtual: valorInicialValidado,
           meta: metaValidada,
-          usuario: 'Admin'
+          usuario: 'Admin',
+          user_id: 1 // <--- SOLUÇÃO: Agora envia o ID para não ser bloqueado pelo backend!
         })
       });
 
@@ -209,7 +210,6 @@ const GestaoCaixa = () => {
           <Link className="nav-item" to="/financeiro">Financeiro</Link>
           <Link className="nav-item active" to="/gestaocaixa">Gestão de Caixa</Link>
           <Link to="/usuarios" className="nav-item">Novos Usuários</Link>
-          
         </nav>
 
         <div className="sidebar-footer">
