@@ -129,3 +129,24 @@ class HistoricoCaixa(db.Model):
             "data": self.data.isoformat() if self.data else None,
             "usuario": self.usuario
         }
+
+
+# Adicione no final do ficheiro backend/models.py
+
+class Ingrediente(db.Model):
+    __tablename__ = 'estoque_ingredientes'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(150), nullable=False)
+    quantidade = db.Column(db.Integer, nullable=False, default=0)
+    preco_total = db.Column(db.Numeric(10, 2), nullable=False)
+    unidade_medida = db.Column(db.String(50), nullable=False, default='unidades')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nome': self.nome,
+            'quantidade': self.quantidade,
+            'precoTotal': float(self.preco_total),
+            'unidadeMedida': self.unidade_medida
+        }

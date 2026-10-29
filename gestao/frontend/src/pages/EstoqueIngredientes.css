@@ -1,0 +1,247 @@
+/* ========================================================
+   ESTILOS PARA A GESTÃO DE ESTOQUE E INGREDIENTES
+======================================================== */
+
+/* Contentor Principal */
+.estoque-container {
+  padding: 30px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #374151;
+  background-color: #f4f6f8;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Cabeçalho (Título e Total) */
+.estoque-container header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.estoque-container header h1 {
+  font-size: 24px;
+  color: #1f2937;
+  margin: 0;
+}
+
+.estoque-container header div {
+  background-color: #ffffff;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.estoque-container header div span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.estoque-container header div strong {
+  color: #0f766e;
+  font-size: 18px;
+  margin-left: 8px;
+}
+
+/* Secção: Formulário de Cadastro */
+.formulario-cadastro {
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+.formulario-cadastro h3 {
+  margin-top: 0;
+  color: #115e59;
+  font-size: 18px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 10px;
+}
+
+.formulario-cadastro form {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 15px;
+  align-items: end;
+}
+
+.formulario-cadastro label {
+  display: block;
+  font-size: 13px;
+  color: #4b5563;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.formulario-cadastro input,
+.formulario-cadastro select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  background-color: #f9fafb;
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
+}
+
+.formulario-cadastro input:focus,
+.formulario-cadastro select:focus {
+  outline: none;
+  border-color: #0f766e;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+}
+
+.formulario-cadastro button {
+  background-color: #0f766e;
+  color: #ffffff;
+  border: none;
+  padding: 0 20px;
+  height: 40px; /* Alinhado com os inputs */
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.formulario-cadastro button:hover {
+  background-color: #115e59;
+}
+
+/* Secção: Tabela de Estoque */
+.tabela-estoque {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+  overflow-x: auto; /* Permite rolagem no telemóvel */
+}
+
+.tabela-estoque h3 {
+  margin-top: 0;
+  color: #115e59;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.tabela-estoque table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.tabela-estoque thead tr {
+  background-color: #f3f4f6;
+  border-bottom: 2px solid #d1d5db;
+}
+
+.tabela-estoque th {
+  padding: 15px 10px;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #374151;
+}
+
+.tabela-estoque td {
+  padding: 15px 10px;
+  font-size: 14px;
+  color: #4b5563;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+.tabela-estoque tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Cores específicas nas colunas da Tabela */
+.tabela-estoque td:nth-child(1) {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.tabela-estoque td:nth-child(3) {
+  color: #047857;
+  font-weight: bold;
+}
+
+.tabela-estoque td:nth-child(4) {
+  color: #2563eb;
+  font-weight: bold;
+}
+
+/* Botões de Ação (+, -, Excluir) */
+.tabela-estoque td button {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-right: 5px;
+  transition: filter 0.2s;
+}
+
+.tabela-estoque td button:hover {
+  filter: brightness(0.9);
+}
+
+/* Identificação dos botões pelo atributo title (definido no JSX) */
+.tabela-estoque td button[title="Retirar 1"] {
+  background-color: #fee2e2;
+  color: #dc2626;
+  font-size: 16px;
+  padding: 6px 14px;
+}
+
+.tabela-estoque td button[title="Adicionar 1"] {
+  background-color: #d1fae5;
+  color: #059669;
+  font-size: 16px;
+  padding: 6px 14px;
+}
+
+.tabela-estoque td button[title="Excluir Produto"] {
+  background-color: #fef2f2;
+  color: #ef4444;
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+/* ========================================================
+   RESPONSIVIDADE (Tablets e Telemóveis)
+======================================================== */
+@media (max-width: 1024px) {
+  .formulario-cadastro form {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .formulario-cadastro button {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .estoque-container {
+    padding: 15px;
+  }
+  
+  .estoque-container header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .estoque-container header div {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .formulario-cadastro form {
+    grid-template-columns: 1fr; /* Um campo por linha no telemóvel */
+  }
+}

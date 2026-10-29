@@ -303,9 +303,7 @@ def excluir(id):
         return jsonify({
             "erro": "Ocorreu um erro interno ao excluir a caixinha."
         }), 500
-# ==========================================================
-# ROTA TEMPORÁRIA PARA ATUALIZAR O BANCO DE DADOS
-# ==========================================================
+
 @gestaocaixa_bp.route("/reset-caixas", methods=["GET"])
 def reset_caixas():
     try:
