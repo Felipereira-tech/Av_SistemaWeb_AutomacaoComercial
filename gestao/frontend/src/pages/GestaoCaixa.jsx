@@ -207,6 +207,7 @@ const GestaoCaixa = () => {
           <Link className="nav-item" to="/dashboard">Dashboard</Link>
           <Link className="nav-item" to="/pdv">Caixa (PDV)</Link>
           <Link className="nav-item" to="/produtos">Produtos</Link>
+          <Link className="nav-item" to="/estoque">Estoque</Link>
           <Link className="nav-item" to="/financeiro">Financeiro</Link>
           <Link className="nav-item active" to="/gestaocaixa">Gestão de Caixa</Link>
           <Link to="/usuarios" className="nav-item">Novos Usuários</Link>

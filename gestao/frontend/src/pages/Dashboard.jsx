@@ -96,6 +96,7 @@ export default function Dashboard() {
           <Link to="/dashboard" className="nav-item active">Dashboard</Link>
           <Link to="/pdv" className="nav-item">Caixa (PDV)</Link>
           <Link to="/produtos" className="nav-item">Produtos</Link>
+          <Link to="/estoque" className="nav-item">Estoque</Link>
           <Link to="/financeiro" className="nav-item">Financeiro</Link>
            <Link to="/gestaocaixa" className="nav-item">Gestão de Caixa</Link>
           <Link to="/usuarios" className="nav-item">Novos Usuários</Link>
